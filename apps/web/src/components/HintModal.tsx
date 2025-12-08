@@ -29,6 +29,7 @@ export function HintModal({ isOpen, onClose, location, totalHintsShown, onHintSh
   const [canShowNext, setCanShowNext] = useState(false);
   const [viewedHints, setViewedHints] = useState<Set<string>>(new Set()); // Track viewed hints to avoid double-counting
   const [timerDisplay, setTimerDisplay] = useState<number | null>(null); // Show countdown in seconds
+  const [generalMode, setGeneralMode] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const getTimerDuration = useCallback(() => {
@@ -39,7 +40,8 @@ export function HintModal({ isOpen, onClose, location, totalHintsShown, onHintSh
     if (!isOpen || !isInitialized) return;
 
     try {
-      const questionsJson = getHintsForLocation(location);
+      const hintLocation = generalMode ? 'GENERAL' : location;
+      const questionsJson = getHintsForLocation(hintLocation);
       const parsed = JSON.parse(questionsJson);
       setQuestions(parsed || []);
       setSelectedIdx(null);
@@ -51,7 +53,7 @@ export function HintModal({ isOpen, onClose, location, totalHintsShown, onHintSh
       console.error('Failed to load hints:', e);
       setQuestions([]);
     }
-  }, [isOpen, location, isInitialized, getHintsForLocation]);
+  }, [isOpen, location, isInitialized, getHintsForLocation, generalMode]);
 
   const startTimer = useCallback((hintId: string) => {
     setCanShowNext(false);
@@ -161,7 +163,15 @@ export function HintModal({ isOpen, onClose, location, totalHintsShown, onHintSh
         <div className={styles.header}>
           <div className={styles.titleContainer}>
             <h2 id="hint-modal-title" className={styles.title}>
-              <s>In</s>visiClues
+              <span><s>In</s>visiClues</span>
+              <button
+                onClick={() => setGeneralMode(!generalMode)}
+                className={styles.easterEgg}
+                aria-label={generalMode ? 'Exit meta hints mode' : 'Enter meta hints mode'}
+                title="Click for meta hints"
+              >
+                ☺
+              </button>
             </h2>
             {timerDisplay !== null && (
               <div className={styles.timerDisplay} aria-live="polite" aria-atomic="true">
@@ -184,7 +194,7 @@ export function HintModal({ isOpen, onClose, location, totalHintsShown, onHintSh
           {selectedIdx === null ? (
             <div className={styles.questionsList}>
               <p className={styles.introText} aria-live="polite" aria-atomic="true">
-                Available hints for: <span style={{ fontWeight: 'bold' }}>{location}</span>
+                {generalMode ? 'Meta hints (game concepts):' : `Available hints for: ${location}`}
               </p>
 
               {questions.length === 0 ? (

@@ -106,9 +106,23 @@ impl HintSystem {
 
     /// Get contextual hints based on game state (act, location)
     /// Returns a sorted list of relevant questions with their scores
+    /// Special case: context = "GENERAL" returns only act:general hints
     pub fn get_hints_for_state(&self, context: Option<&str>) -> Vec<(usize, String, String)> {
-        let state_tags = Self::get_state_tags(context);
         let all_questions = self.get_all_questions();
+
+        // Special handling for general/meta hints
+        if let Some("GENERAL") = context {
+            let general_hints: Vec<(usize, String, String)> = all_questions
+                .iter()
+                .enumerate()
+                .filter(|(_, q)| q.tags.iter().any(|tag| tag == "act:general"))
+                .map(|(idx, q)| (idx, q.question.clone(), q.section.clone()))
+                .collect();
+            return general_hints;
+        }
+
+        // Normal location-based hints
+        let state_tags = Self::get_state_tags(context);
 
         let mut scored: Vec<(usize, i32, String, String)> = all_questions
             .iter()

@@ -39,6 +39,32 @@
   font-size: 14px;
   color: hsl(var(--terminal-green));
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.easterEgg {
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: hsl(var(--terminal-green));
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  height: 16px;
+  width: 16px;
+}
+
+.easterEgg:active {
+  opacity: 1;
 }
 
 .timerDisplay {
