@@ -21,6 +21,10 @@ else
     export PATH="$HOME/.asdf/shims:$HOME/.asdf/bin:$PATH"
 fi
 
+echo "Adding asdf plugins..."
+asdf plugin add moonrepo https://github.com/moonrepo/asdf-moonrepo.git 2>/dev/null || true
+asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git 2>/dev/null || true
+
 if [ -f "$REPO_ROOT/.tool-versions" ]; then
     echo "Installing tools from .tool-versions..."
     asdf install
