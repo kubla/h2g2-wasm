@@ -61,7 +61,8 @@ wasm-bindgen target/wasm32-unknown-unknown/release/h2g2_wasm.wasm \
   --target web
 
 echo "Fixing WASM JS bindings for browser environment..."
-sed -i "" "s/from 'env'/from '..\/env-shim.js'/g" ../apps/web/src/wasm/h2g2_wasm.js
+sed -i.bak "s/from 'env'/from '..\/env-shim.js'/g" ../apps/web/src/wasm/h2g2_wasm.js
+rm -f ../apps/web/src/wasm/h2g2_wasm.js.bak
 
 echo "Copying WASM to public..."
 cp ../apps/web/src/wasm/h2g2_wasm_bg.wasm ../apps/web/public/h2g2_wasm_bg.wasm
