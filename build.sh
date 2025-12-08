@@ -6,16 +6,9 @@ echo "H2G2 Build Script"
 echo "===================================="
 echo ""
 
-# Change to repo root (handle both normal runs and Cloudflare .cf/ build root)
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-if [ -d "$SCRIPT_DIR/.." ] && [ "$(basename "$SCRIPT_DIR")" = ".cf" ]; then
-    # Running from .cf/ build root - go to parent
-    REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-else
-    # Normal run from repo root
-    REPO_ROOT="$SCRIPT_DIR"
-fi
-cd "$REPO_ROOT"
+# Change to repo root
+cd "$(dirname "$0")"
+REPO_ROOT="$(pwd)"
 echo "Repository root: $REPO_ROOT"
 echo ""
 
@@ -32,18 +25,7 @@ echo "Adding asdf plugins..."
 asdf plugin add moonrepo https://github.com/moonrepo/asdf-moonrepo.git 2>/dev/null || true
 asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git 2>/dev/null || true
 
-# Use Cloudflare-specific .tool-versions if running from Cloudflare build, otherwise use root
-TOOL_VERSIONS_FILE="$REPO_ROOT/.tool-versions"
-CF_DIR="$REPO_ROOT/.cf"
-
-if [ "${H2G2_CLOUDFLARE_BUILD:-0}" = "1" ] && [ -f "$CF_DIR/.tool-versions" ]; then
-    echo "Using Cloudflare-specific .tool-versions (nodejs 22.16.0)..."
-    TOOL_VERSIONS_FILE="$CF_DIR/.tool-versions"
-elif [ -f "$REPO_ROOT/.tool-versions" ]; then
-    echo "Using root .tool-versions (nodejs 25.2.1)..."
-fi
-
-if [ -f "$TOOL_VERSIONS_FILE" ]; then
+if [ -f "$REPO_ROOT/.tool-versions" ]; then
     echo "Installing tools from .tool-versions..."
     asdf install
 fi
